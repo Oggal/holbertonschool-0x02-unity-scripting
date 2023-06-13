@@ -6,8 +6,10 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public float speed;
+    public int health;
     private int score;
     [SerializeField] Rigidbody rb;
+    [SerializeField] int StartHealth = 5;
     Vector3 dir = Vector3.zero;
 
     // Start is called before the first frame update
@@ -16,6 +18,7 @@ public class PlayerController : MonoBehaviour
         if (rb == null)
             rb = GetComponent<Rigidbody>();
         score = 0;
+        health = StartHealth;
     }
 
     // Update is called once per frame
@@ -33,6 +36,13 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        HandlePickup(other);
+        HandleTrap(other);
+
+    }
+
+    private void HandlePickup(Collider other)
+    {
         if (other.gameObject.CompareTag("Pickup"))
         {
             other.gameObject.SetActive(false);
@@ -41,4 +51,21 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void HandleTrap(Collider other)
+    {
+        if (other.gameObject.CompareTag("Trap"))
+        {
+            if(--health <= 0)
+            {
+                Debug.Log("Game Over!");
+                #if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+                #else
+                Application.Quit();
+                #endif
+                return;
+            }
+            Debug.Log("Health: " + health);
+        }
+    }
 }
