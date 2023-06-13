@@ -38,6 +38,7 @@ public class PlayerController : MonoBehaviour
     {
         HandlePickup(other);
         HandleTrap(other);
+        HandleGoal(other);
 
     }
 
@@ -58,14 +59,17 @@ public class PlayerController : MonoBehaviour
             if(--health <= 0)
             {
                 Debug.Log("Game Over!");
-                #if UNITY_EDITOR
-                UnityEditor.EditorApplication.isPlaying = false;
-                #else
-                Application.Quit();
-                #endif
+                UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
                 return;
             }
             Debug.Log("Health: " + health);
         }
+    }
+
+    private void HandleGoal(Collider other)
+    {
+        if (!other.gameObject.CompareTag("Goal"))
+            return;
+        Debug.Log("You win!");
     }
 }
